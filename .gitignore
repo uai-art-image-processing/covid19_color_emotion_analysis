@@ -1,0 +1,6 @@
+*.json
+output
+.ipynb_checkpoints
+*.txt
+*.jpg
+*.png
