@@ -236,7 +236,21 @@ def get_image_signatures(img_list, preprocess=preprocess_img_hls, analysis_palet
             
     return results
 
+def quantize_img_twice(img_hls, preprocess=preprocess_img_hls, palette=None, inverse_map={}):
+    shape = img_hls.shape
+    palette_index_matrix = get_color_wheel_quantized_img(preprocess(img_hls), palette, apply_sin_to_hue=True)
+    
+    return np.array(list(map(lambda x: inverse_map[x], palette_index_matrix.flatten()))).reshape(shape[0], shape[1], 3)
+
+def get_rgb_quantize_img_twice(img_hls, preprocess=preprocess_img_hls, palette=None, inverse_map={}):
+    quantized_img = quantize_img_twice(img_hls, preprocess, palette, inverse_map) * (180, 255, 255)
+    
+    plt.imshow(cv2.cvtColor(np.uint8(quantized_img), cv2.COLOR_HLS2RGB))
+    plt.show()
+    
 def get_hue_palette_cube(hues):
+    example_hues = [(hue, 0.5, 0.5) for hue in hues]
+    
     luminances = np.array([0, 0.33, 0.66, 1])
     hue_luminance = np.transpose([np.tile(hues, len(luminances)), np.repeat(luminances, len(hues))]).copy()
     saturations = np.array([0, 0.33, 0.66, 1])
@@ -291,4 +305,4 @@ def get_hue_palette_cube(hues):
         for code in codes:
             inverse_map[code] = color
             
-    return cube_palette, pd_cube, final_analysis_array, final_analysis_palette, inverse_map
+    return cube_palette, pd_cube, final_analysis_array, final_analysis_palette, final_analysis_names, inverse_map
