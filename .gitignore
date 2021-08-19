@@ -4,3 +4,7 @@ output
 *.txt
 *.jpg
 *.png
+
+# model data
+*.pkl
+*.pt
